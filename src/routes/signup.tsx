@@ -8,22 +8,43 @@ export const Route = createFileRoute("/signup")({ component: SignupPage });
 
 function SignupPage() {
   const navigate = useNavigate();
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    const uname = username.trim();
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(uname)) {
+      return toast.error("Username 3-20 karakter (huruf, angka, _)");
+    }
     setBusy(true);
     const { error } = await supabase.auth.signUp({
-      email,
+      email: email.trim(),
       password,
-      options: { emailRedirectTo: window.location.origin },
+      options: {
+        emailRedirectTo: window.location.origin,
+        data: { username: uname },
+      },
+    });
+    if (error) {
+      setBusy(false);
+      return toast.error(error.message);
+    }
+    // auto-confirm enabled — try sign in immediately
+    const { error: signInErr } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
-    toast.success("Akun dibuat! Cek email untuk verifikasi, lalu masuk.");
-    navigate({ to: "/login" });
+    if (signInErr) {
+      toast.success("Akun dibuat! Silakan masuk.");
+      navigate({ to: "/login" });
+      return;
+    }
+    toast.success("Selamat datang di BisnisAI!");
+    navigate({ to: "/" });
   };
 
   return (
@@ -36,6 +57,16 @@ function SignupPage() {
         <p className="text-sm text-muted-foreground">Gratis untuk pelaku UMKM</p>
       </div>
       <form onSubmit={onSubmit} className="w-full space-y-3 rounded-2xl border border-border bg-card p-5 shadow-card">
+        <div>
+          <label className="mb-1 block text-sm font-medium">Username</label>
+          <input
+            type="text" required value={username} onChange={(e) => setUsername(e.target.value)}
+            className="w-full rounded-xl border border-input bg-background px-3 py-2.5 text-base outline-none focus:ring-2 focus:ring-ring"
+            placeholder="contoh: tokobudi"
+            autoCapitalize="none"
+          />
+          <p className="mt-1 text-xs text-muted-foreground">3-20 karakter, huruf/angka/_</p>
+        </div>
         <div>
           <label className="mb-1 block text-sm font-medium">Email</label>
           <input
