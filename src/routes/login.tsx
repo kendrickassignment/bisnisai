@@ -12,16 +12,27 @@ function LoginPage() {
   const navigate = useNavigate();
   useEffect(() => { if (user) navigate({ to: "/" }); }, [user, navigate]);
 
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    const id = identifier.trim();
+    if (!id) return toast.error("Masukkan email atau username");
     setBusy(true);
+    let email = id;
+    if (!id.includes("@")) {
+      const { data, error } = await supabase.rpc("get_email_by_username", { p_username: id });
+      if (error || !data) {
+        setBusy(false);
+        return toast.error("Username tidak ditemukan");
+      }
+      email = data as string;
+    }
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error("Email/username atau kata sandi salah");
     toast.success("Selamat datang kembali!");
     navigate({ to: "/" });
   };
@@ -38,11 +49,12 @@ function LoginPage() {
       <form onSubmit={onSubmit} className="w-full space-y-3 rounded-2xl border border-border bg-card p-5 shadow-card">
         <h2 className="text-lg font-semibold">Masuk</h2>
         <div>
-          <label className="mb-1 block text-sm font-medium">Email</label>
+          <label className="mb-1 block text-sm font-medium">Email atau Username</label>
           <input
-            type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+            type="text" required value={identifier} onChange={(e) => setIdentifier(e.target.value)}
             className="w-full rounded-xl border border-input bg-background px-3 py-2.5 text-base outline-none focus:ring-2 focus:ring-ring"
-            placeholder="nama@contoh.com"
+            placeholder="nama@contoh.com atau tokobudi"
+            autoCapitalize="none"
           />
         </div>
         <div>
