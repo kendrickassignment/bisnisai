@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/auth-context";
 import { BottomNav } from "./BottomNav";
 import { Button } from "@/components/ui/button";
 import { LogOut, Sprout } from "lucide-react";
+import { OnboardingTour } from "./OnboardingTour";
 
 interface Props {
   title: string;
@@ -53,6 +54,7 @@ export function AppShell({ title, subtitle, children }: Props) {
       </header>
       <main className="flex-1 overflow-y-auto px-4 py-4">{children}</main>
       <BottomNav />
+      <OnboardingTour />
     </div>
   );
 }
