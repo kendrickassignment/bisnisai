@@ -62,6 +62,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "BisnisAI bantu UMKM Indonesia bikin konten promosi, catat keuangan, dan balas pelanggan — semua pakai bahasa sehari-hari.",
       },
+      { name: "dicoding:email", content: "kendrickfilbert@gmail.com" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
