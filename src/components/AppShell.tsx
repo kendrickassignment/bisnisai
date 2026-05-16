@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/auth-context";
 import { BottomNav } from "./BottomNav";
 import { Button } from "@/components/ui/button";
 import { LogOut, Sprout } from "lucide-react";
+import { OnboardingTour } from "./OnboardingTour";
 
 interface Props {
   title: string;
