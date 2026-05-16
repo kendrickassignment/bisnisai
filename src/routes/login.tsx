@@ -77,6 +77,9 @@ function LoginPage() {
           <Link to="/signup" className="font-semibold text-primary">Daftar</Link>
         </p>
       </form>
+      <div className="mt-6 w-full">
+        <TutorialAbout variant="login" />
+      </div>
     </div>
   );
 }
