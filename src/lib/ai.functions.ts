@@ -179,10 +179,20 @@ export const recordFinance = createServerFn({ method: "POST" })
 /* ---------------- Balas Pelanggan ---------------- */
 export const generateReplies = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input) => z.object({ question: z.string().min(2).max(800) }).parse(input))
+  .inputValidator((input) =>
+    z
+      .object({
+        question: z.string().min(2).max(800),
+        knowledge: z.string().max(2000).optional(),
+      })
+      .parse(input),
+  )
   .handler(async ({ data }) => {
-    const system =
+    const baseSystem =
       "Kamu adalah asisten layanan pelanggan UMKM Indonesia. Berikan balasan dalam Bahasa Indonesia yang sopan, hangat, dan natural seperti chat WhatsApp. Maksimal 2 kalimat per balasan.";
+    const system = data.knowledge
+      ? `${baseSystem}\n\nInformasi tentang toko/produk (gunakan sebagai sumber jawaban, jangan mengarang fakta di luar info ini):\n"""\n${data.knowledge}\n"""\nJika pertanyaan menanyakan hal yang tidak ada di informasi di atas, jawab dengan jujur dan tawarkan untuk membantu lebih lanjut.`
+      : baseSystem;
     const result = await callGateway({
       model: MODEL,
       messages: [
