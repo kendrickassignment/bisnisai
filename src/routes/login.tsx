@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { Sprout } from "lucide-react";
 import { toast } from "sonner";
+import { TutorialAbout } from "@/components/TutorialAbout";
 
 export const Route = createFileRoute("/login")({ component: LoginPage });
 
