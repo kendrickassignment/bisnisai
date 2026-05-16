@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { Sprout } from "lucide-react";
 import { toast } from "sonner";
+import { TutorialAbout } from "@/components/TutorialAbout";
 
 export const Route = createFileRoute("/login")({ component: LoginPage });
 
@@ -38,7 +39,7 @@ function LoginPage() {
   };
 
   return (
-    <div className="app-shell flex min-h-dvh flex-col items-center justify-center px-6">
+    <div className="app-shell flex min-h-dvh flex-col items-center px-6 py-8">
       <div className="mb-8 flex flex-col items-center text-center">
         <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-primary text-primary-foreground shadow-soft">
           <Sprout className="h-7 w-7" />
@@ -76,6 +77,9 @@ function LoginPage() {
           <Link to="/signup" className="font-semibold text-primary">Daftar</Link>
         </p>
       </form>
+      <div className="mt-6 w-full">
+        <TutorialAbout variant="login" />
+      </div>
     </div>
   );
 }
