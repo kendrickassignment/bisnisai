@@ -134,6 +134,9 @@ function KontenPage() {
           </ResultBlock>
         </div>
       )}
+      <div className="mt-6">
+        <TutorialAbout variant="home" />
+      </div>
     </AppShell>
   );
 }
