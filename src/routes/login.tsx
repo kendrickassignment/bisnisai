@@ -39,7 +39,7 @@ function LoginPage() {
   };
 
   return (
-    <div className="app-shell flex min-h-dvh flex-col items-center justify-center px-6">
+    <div className="app-shell flex min-h-dvh flex-col items-center px-6 py-8">
       <div className="mb-8 flex flex-col items-center text-center">
         <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-primary text-primary-foreground shadow-soft">
           <Sprout className="h-7 w-7" />
