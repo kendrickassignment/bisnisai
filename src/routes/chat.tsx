@@ -246,32 +246,6 @@ Promo / catatan khusus: Beli 3 gratis ongkir Jabodetabek`,
         </div>
       )}
 
-    </AppShell>
-  );
-}
-
-function KnowledgeSummary({ knowledge }: { knowledge: string }) {
-  const lines = knowledge.split("\n").filter((l) => l.trim());
-  return (
-    <div className="space-y-1.5">
-      {lines.map((line, i) => {
-        const match = line.match(/^(.+?)[:：]\s*(.*)$/);
-        if (!match) return (
-          <p key={i} className="text-xs text-muted-foreground">{line.trim()}</p>
-        );
-        const [, key, val] = match;
-        if (!val.trim()) return null;
-        return (
-          <div key={i} className="flex gap-1.5">
-            <span className="shrink-0 text-[11px] font-medium text-muted-foreground">{key.trim()}:</span>
-            <span className="text-xs font-semibold text-foreground">{val.trim()}</span>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
       {/* Confirmation modal — summary before generating */}
       {showConfirm && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center">
@@ -331,5 +305,27 @@ function KnowledgeSummary({ knowledge }: { knowledge: string }) {
         </div>
       )}
     </AppShell>
+  );
+}
+
+function KnowledgeSummary({ knowledge }: { knowledge: string }) {
+  const lines = knowledge.split("\n").filter((l) => l.trim());
+  return (
+    <div className="space-y-1.5">
+      {lines.map((line, i) => {
+        const match = line.match(/^(.+?)[:：]\s*(.*)$/);
+        if (!match) return (
+          <p key={i} className="text-xs text-muted-foreground">{line.trim()}</p>
+        );
+        const [, key, val] = match;
+        if (!val.trim()) return null;
+        return (
+          <div key={i} className="flex gap-1.5">
+            <span className="shrink-0 text-[11px] font-medium text-muted-foreground">{key.trim()}:</span>
+            <span className="text-xs font-semibold text-foreground">{val.trim()}</span>
+          </div>
+        );
+      })}
+    </div>
   );
 }
