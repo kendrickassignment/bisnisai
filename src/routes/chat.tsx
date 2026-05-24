@@ -40,6 +40,7 @@ function ChatPage() {
   const [question, setQuestion] = useState("");
   const [busy, setBusy] = useState(false);
   const [replies, setReplies] = useState<string[]>([]);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   // product knowledge
   const storageKey = user ? `bisnisai_knowledge_${user.id}` : "bisnisai_knowledge";
@@ -86,17 +87,24 @@ Promo / catatan khusus: Beli 3 gratis ongkir Jabodetabek`,
     setKnowledgeOpen(true);
   };
 
+  const effectiveKnowledge = (() => {
+    const trimmed = knowledge.trim();
+    if (!trimmed || trimmed === KNOWLEDGE_TEMPLATE.trim()) return undefined;
+    return trimmed;
+  })();
+
+  const openConfirm = () => {
+    if (!question.trim() || busy) return;
+    setShowConfirm(true);
+  };
+
   const onGenerate = async () => {
     if (!question.trim() || busy) return;
     setBusy(true);
+    setShowConfirm(false);
     try {
-      const trimmedKnowledge = knowledge.trim();
-      const useKnowledge =
-        trimmedKnowledge && trimmedKnowledge !== KNOWLEDGE_TEMPLATE.trim()
-          ? trimmedKnowledge
-          : undefined;
       const r = await fn({
-        data: { question: question.trim(), knowledge: useKnowledge },
+        data: { question: question.trim(), knowledge: effectiveKnowledge },
       });
       setReplies(r.replies);
     } catch (e: any) {
