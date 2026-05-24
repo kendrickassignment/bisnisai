@@ -245,6 +245,65 @@ Promo / catatan khusus: Beli 3 gratis ongkir Jabodetabek`,
           ))}
         </div>
       )}
+
+      {/* Confirmation modal — summary before generating */}
+      {showConfirm && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center">
+          <div className="w-full max-w-md overflow-hidden rounded-3xl border border-border bg-card shadow-xl">
+            <div className="flex items-center justify-between border-b border-border px-5 py-4">
+              <h3 className="text-sm font-bold">Ringkasan sebelum membuat balasan</h3>
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="rounded-lg p-1 text-muted-foreground hover:bg-muted"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="max-h-[70vh] space-y-4 overflow-y-auto px-5 py-4">
+              {/* Buyer question */}
+              <div className="rounded-2xl bg-muted/60 p-3">
+                <p className="mb-1 text-[11px] font-semibold uppercase text-muted-foreground">Pertanyaan pembeli</p>
+                <p className="text-sm leading-relaxed text-foreground">"{question.trim()}"</p>
+              </div>
+
+              {/* Knowledge summary */}
+              {effectiveKnowledge ? (
+                <div className="rounded-2xl border border-border bg-background p-3">
+                  <p className="mb-2 text-[11px] font-semibold uppercase text-muted-foreground">Info produk / toko yang dipakai AI</p>
+                  <KnowledgeSummary knowledge={effectiveKnowledge} />
+                </div>
+              ) : (
+                <div className="flex items-start gap-2.5 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-amber-900">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                  <div>
+                    <p className="text-xs font-semibold">Tidak ada info produk</p>
+                    <p className="text-[11px] leading-relaxed">
+                      AI akan membalas tanpa referensi harga, COD, atau pengiriman. Buka "Info Produk / Toko" di atas untuk mengisi data toko.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-2 border-t border-border px-5 py-4">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="flex-1 rounded-xl bg-muted py-2.5 text-xs font-semibold text-foreground transition hover:bg-muted/80"
+              >
+                Kembali
+              </button>
+              <button
+                onClick={onGenerate}
+                disabled={busy}
+                className="flex-1 rounded-xl bg-gradient-primary py-2.5 text-xs font-semibold text-primary-foreground shadow-soft transition disabled:opacity-50"
+              >
+                {busy ? "Membuat…" : "Lanjutkan"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AppShell>
   );
 }
