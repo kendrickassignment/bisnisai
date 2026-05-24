@@ -131,10 +131,10 @@ Promo / catatan khusus: Beli 3 gratis ongkir Jabodetabek`,
       />
       <button
         disabled={!question.trim() || busy}
-        onClick={onGenerate}
+        onClick={openConfirm}
         className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-primary py-3.5 text-sm font-semibold text-primary-foreground shadow-soft transition disabled:opacity-50"
       >
-        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
         {busy ? "Menyusun balasan…" : "Buat Balasan"}
       </button>
 
