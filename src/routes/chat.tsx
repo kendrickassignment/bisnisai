@@ -6,16 +6,19 @@ import { generateReplies } from "@/lib/ai.functions";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 import {
+  AlertTriangle,
   BookText,
   Check,
   ChevronDown,
   Copy,
+  Eye,
   Loader2,
   MessageCircle,
   Save,
   Share2,
   Sparkles,
   Wand2,
+  X,
 } from "lucide-react";
 
 export const Route = createFileRoute("/chat")({ component: ChatPage });
