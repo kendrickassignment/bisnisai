@@ -246,6 +246,10 @@ Promo / catatan khusus: Beli 3 gratis ongkir Jabodetabek`,
         </div>
       )}
 
+    </AppShell>
+  );
+}
+
 function KnowledgeSummary({ knowledge }: { knowledge: string }) {
   const lines = knowledge.split("\n").filter((l) => l.trim());
   return (
