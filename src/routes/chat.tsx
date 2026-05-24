@@ -6,16 +6,19 @@ import { generateReplies } from "@/lib/ai.functions";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 import {
+  AlertTriangle,
   BookText,
   Check,
   ChevronDown,
   Copy,
+  Eye,
   Loader2,
   MessageCircle,
   Save,
   Share2,
   Sparkles,
   Wand2,
+  X,
 } from "lucide-react";
 
 export const Route = createFileRoute("/chat")({ component: ChatPage });
@@ -37,6 +40,7 @@ function ChatPage() {
   const [question, setQuestion] = useState("");
   const [busy, setBusy] = useState(false);
   const [replies, setReplies] = useState<string[]>([]);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   // product knowledge
   const storageKey = user ? `bisnisai_knowledge_${user.id}` : "bisnisai_knowledge";
@@ -83,17 +87,24 @@ Promo / catatan khusus: Beli 3 gratis ongkir Jabodetabek`,
     setKnowledgeOpen(true);
   };
 
+  const effectiveKnowledge = (() => {
+    const trimmed = knowledge.trim();
+    if (!trimmed || trimmed === KNOWLEDGE_TEMPLATE.trim()) return undefined;
+    return trimmed;
+  })();
+
+  const openConfirm = () => {
+    if (!question.trim() || busy) return;
+    setShowConfirm(true);
+  };
+
   const onGenerate = async () => {
     if (!question.trim() || busy) return;
     setBusy(true);
+    setShowConfirm(false);
     try {
-      const trimmedKnowledge = knowledge.trim();
-      const useKnowledge =
-        trimmedKnowledge && trimmedKnowledge !== KNOWLEDGE_TEMPLATE.trim()
-          ? trimmedKnowledge
-          : undefined;
       const r = await fn({
-        data: { question: question.trim(), knowledge: useKnowledge },
+        data: { question: question.trim(), knowledge: effectiveKnowledge },
       });
       setReplies(r.replies);
     } catch (e: any) {
@@ -120,10 +131,10 @@ Promo / catatan khusus: Beli 3 gratis ongkir Jabodetabek`,
       />
       <button
         disabled={!question.trim() || busy}
-        onClick={onGenerate}
+        onClick={openConfirm}
         className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-primary py-3.5 text-sm font-semibold text-primary-foreground shadow-soft transition disabled:opacity-50"
       >
-        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
         {busy ? "Menyusun balasan…" : "Buat Balasan"}
       </button>
 
@@ -234,6 +245,87 @@ Promo / catatan khusus: Beli 3 gratis ongkir Jabodetabek`,
           ))}
         </div>
       )}
+
+      {/* Confirmation modal — summary before generating */}
+      {showConfirm && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center">
+          <div className="w-full max-w-md overflow-hidden rounded-3xl border border-border bg-card shadow-xl">
+            <div className="flex items-center justify-between border-b border-border px-5 py-4">
+              <h3 className="text-sm font-bold">Ringkasan sebelum membuat balasan</h3>
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="rounded-lg p-1 text-muted-foreground hover:bg-muted"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="max-h-[70vh] space-y-4 overflow-y-auto px-5 py-4">
+              {/* Buyer question */}
+              <div className="rounded-2xl bg-muted/60 p-3">
+                <p className="mb-1 text-[11px] font-semibold uppercase text-muted-foreground">Pertanyaan pembeli</p>
+                <p className="text-sm leading-relaxed text-foreground">"{question.trim()}"</p>
+              </div>
+
+              {/* Knowledge summary */}
+              {effectiveKnowledge ? (
+                <div className="rounded-2xl border border-border bg-background p-3">
+                  <p className="mb-2 text-[11px] font-semibold uppercase text-muted-foreground">Info produk / toko yang dipakai AI</p>
+                  <KnowledgeSummary knowledge={effectiveKnowledge} />
+                </div>
+              ) : (
+                <div className="flex items-start gap-2.5 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-amber-900">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                  <div>
+                    <p className="text-xs font-semibold">Tidak ada info produk</p>
+                    <p className="text-[11px] leading-relaxed">
+                      AI akan membalas tanpa referensi harga, COD, atau pengiriman. Buka "Info Produk / Toko" di atas untuk mengisi data toko.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-2 border-t border-border px-5 py-4">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="flex-1 rounded-xl bg-muted py-2.5 text-xs font-semibold text-foreground transition hover:bg-muted/80"
+              >
+                Kembali
+              </button>
+              <button
+                onClick={onGenerate}
+                disabled={busy}
+                className="flex-1 rounded-xl bg-gradient-primary py-2.5 text-xs font-semibold text-primary-foreground shadow-soft transition disabled:opacity-50"
+              >
+                {busy ? "Membuat…" : "Lanjutkan"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AppShell>
+  );
+}
+
+function KnowledgeSummary({ knowledge }: { knowledge: string }) {
+  const lines = knowledge.split("\n").filter((l) => l.trim());
+  return (
+    <div className="space-y-1.5">
+      {lines.map((line, i) => {
+        const match = line.match(/^(.+?)[:：]\s*(.*)$/);
+        if (!match) return (
+          <p key={i} className="text-xs text-muted-foreground">{line.trim()}</p>
+        );
+        const [, key, val] = match;
+        if (!val.trim()) return null;
+        return (
+          <div key={i} className="flex gap-1.5">
+            <span className="shrink-0 text-[11px] font-medium text-muted-foreground">{key.trim()}:</span>
+            <span className="text-xs font-semibold text-foreground">{val.trim()}</span>
+          </div>
+        );
+      })}
+    </div>
   );
 }
