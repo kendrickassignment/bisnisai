@@ -246,7 +246,7 @@ Promo / catatan khusus: Beli 3 gratis ongkir Jabodetabek`,
         </div>
       )}
 
-      {/* Confirmation modal — summary before generating */}
+      
       {showConfirm && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center">
           <div className="w-full max-w-md overflow-hidden rounded-3xl border border-border bg-card shadow-xl">
